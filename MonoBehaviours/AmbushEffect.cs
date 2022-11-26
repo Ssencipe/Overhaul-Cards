@@ -11,10 +11,12 @@ using UnboundLib.Cards;
 using UnboundLib.Networking;
 using UnityEngine;
 using UnboundLib.Utils;
+using ModdingUtils.Extensions;
+using ModdingUtils.MonoBehaviours;
 
 namespace OverhaulCards.MonoBehaviours
 {
-    class AmbushEffect : MonoBehaviour
+    class AmbushEffect : ReversibleEffect
     {
         public Player player;
 
@@ -22,34 +24,26 @@ namespace OverhaulCards.MonoBehaviours
 
         public CharacterData data;
 
-        private Action<BlockTrigger.BlockTriggerType> ambushAction;
-
         private Player target;
 
         private void Awake()
         {
             player = gameObject.GetComponent<Player>();
         }
-        private void Start()
+        public override void OnStart()
         {
-            if ((bool)block)
-            {
-                ambushAction = GetDoBlockAction(player, block, data).Invoke;
-                block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Combine(block.BlockAction, ambushAction);
-            }
+            block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Combine(block.BlockAction, new Action<BlockTrigger.BlockTriggerType>(OnBlock));
+            SetLivesToEffect(int.MaxValue);
         }
-        public Action<BlockTrigger.BlockTriggerType> GetDoBlockAction(Player player, Block block, CharacterData data)
+        private void OnBlock(BlockTrigger.BlockTriggerType trigger)
         {
-            return delegate
-            {
-                target = PlayerManager.instance.GetOtherPlayer(GetComponentInParent<Player>());
-                player.GetComponentInParent<PlayerCollision>().IgnoreWallForFrames(2);
-                transform.root.transform.position = target.transform.position + (target.transform.position - transform.position).normalized;
-            };
+            target = PlayerManager.instance.GetOtherPlayer(GetComponentInParent<Player>());
+            player.GetComponentInParent<PlayerCollision>().IgnoreWallForFrames(2);
+            transform.root.transform.position = target.transform.position + (target.transform.position - transform.position).normalized;
         }
-        private void OnDestroy()
+        public override void OnOnDestroy()
         {
-            block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Remove(block.BlockAction, ambushAction);
+            block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Remove(block.BlockAction, new Action<BlockTrigger.BlockTriggerType>(OnBlock));
         }
     }
 }

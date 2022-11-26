@@ -10,18 +10,19 @@ using UnboundLib;
 using UnboundLib.Cards;
 using UnboundLib.Networking;
 using UnityEngine;
+using UnboundLib.Utils;
+using ModdingUtils.Extensions;
+using ModdingUtils.MonoBehaviours;
 
-namespace OverhaulCards.Cards
+namespace OverhaulCards.MonoBehaviours
 {
-    class WarpEffect : MonoBehaviour
+    class WarpEffect : ReversibleEffect
     {
         public Player player;
 
         public Block block;
 
         public CharacterData data;
-
-        private Action<BlockTrigger.BlockTriggerType> warpAction;
 
         private bool init = false;
 
@@ -31,17 +32,13 @@ namespace OverhaulCards.Cards
         {
             player = gameObject.GetComponent<Player>();
         }
-        private void Start()
+        public override void OnStart()
         {
-            if ((bool)block)
-            {
-                warpAction = GetDoBlockAction(player, block, data).Invoke;
-                block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Combine(block.BlockAction, warpAction);
-            }
+            block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Combine(block.BlockAction, new Action<BlockTrigger.BlockTriggerType>(OnBlock));
+            SetLivesToEffect(int.MaxValue);
         }
-        public Action<BlockTrigger.BlockTriggerType> GetDoBlockAction(Player player, Block block, CharacterData data)
+        private void OnBlock(BlockTrigger.BlockTriggerType trigger)
         {
-            return delegate
             {
                 if (init == false)
                 {
@@ -54,9 +51,9 @@ namespace OverhaulCards.Cards
                 }
             };
         }
-        private void OnDestroy()
+        public override void OnOnDestroy()
         {
-            block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Remove(block.BlockAction, warpAction);
+            block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Remove(block.BlockAction, new Action<BlockTrigger.BlockTriggerType>(OnBlock));
         }
     }
 }

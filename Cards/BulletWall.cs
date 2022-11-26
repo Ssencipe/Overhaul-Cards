@@ -28,7 +28,7 @@ namespace OverhaulCards.Cards
             gun.projectileSpeed *= 0.4f;
             gun.projectielSimulatonSpeed *= 0.4f;
             gun.gravity *= 0f;
-            gun.reloadTime += 3.5f;
+            gun.reloadTime += 3f;
             gun.destroyBulletAfter = 2f;
 
         }
@@ -89,7 +89,7 @@ namespace OverhaulCards.Cards
                 {
                     positive = false,
                     stat = "Reload Time",
-                    amount = "+3.5s",
+                    amount = "+3s",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()

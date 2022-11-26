@@ -1,4 +1,5 @@
 ﻿using ModsPlus;
+using OverhaulCards.MonoBehaviours;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +8,10 @@ using System.Threading.Tasks;
 using UnboundLib;
 using UnboundLib.Cards;
 using UnityEngine;
-using OverhaulCards.MonoBehaviours;
 
 namespace OverhaulCards.Cards
 {
-    class Warp : CustomCard
+    class Embiggen : CustomCard
     {
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers, Block block)
         {
@@ -21,27 +21,23 @@ namespace OverhaulCards.Cards
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
             //Edits values on player when card is selected
-            var warpMono = player.gameObject.AddComponent<WarpEffect>();
-            warpMono.player = player;
-            warpMono.block = block;
-            warpMono.data = data;
-            statModifiers.health *= 1.25f;
-            block.cdMultiplier *= 0.5f;
+            var embiggenMono = player.gameObject.GetOrAddComponent<EmbiggenEffect>();
+            block.cdAdd = 2.5f;
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
             //Run when the card is removed from the player
-            var warpMono = player.gameObject.AddComponent<WarpEffect>();
-            UnityEngine.GameObject.Destroy(warpMono);
+            var embiggenMono = player.gameObject.GetOrAddComponent<EmbiggenEffect>();
+            UnityEngine.GameObject.Destroy(embiggenMono);
         }
 
         protected override string GetTitle()
         {
-            return "Warp";
+            return "Embiggen";
         }
         protected override string GetDescription()
         {
-            return "Teleports you to random nearby location when blocking.";
+            return "Temporarily become large and gain max health when blocking.";
         }
         protected override GameObject GetCardArt()
         {
@@ -49,7 +45,7 @@ namespace OverhaulCards.Cards
         }
         protected override CardInfo.Rarity GetRarity()
         {
-            return CardInfo.Rarity.Uncommon;
+            return CardInfo.Rarity.Rare;
         }
         protected override CardInfoStat[] GetStats()
         {
@@ -57,16 +53,9 @@ namespace OverhaulCards.Cards
             {
                 new CardInfoStat()
                 {
-                    positive = true,
-                    stat = "Health",
-                    amount = "+25%",
-                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
-                },
-                new CardInfoStat()
-                {
-                    positive = true,
+                    positive = false,
                     stat = "Block Cooldown",
-                    amount = "-50%",
+                    amount = "2.5s",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
             };
@@ -74,7 +63,7 @@ namespace OverhaulCards.Cards
 
         protected override CardThemeColor.CardThemeColorType GetTheme()
         {
-            return CardThemeColor.CardThemeColorType.MagicPink;
+            return CardThemeColor.CardThemeColorType.DefensiveBlue;
         }
         public override string GetModName()
         {

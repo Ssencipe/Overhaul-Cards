@@ -50,6 +50,8 @@ namespace OverhaulCards.Cards
             CustomCard.BuildCard<Ambush>();
             CustomCard.BuildCard<EyeBeam>();
             //CustomCard.BuildCard<Invert>();
+            CustomCard.BuildCard<Embiggen>();
+            CustomCard.BuildCard<Minimize>();
         }
     }
 }

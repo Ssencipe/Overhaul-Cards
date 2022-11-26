@@ -21,15 +21,17 @@ namespace OverhaulCards.Cards
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
             //Edits values on player when card is selected
-            AmbushEffect ambushEffect = player.gameObject.AddComponent<AmbushEffect>();
-            ambushEffect.player = player;
-            ambushEffect.block = block;
-            ambushEffect.data = data;
+            var ambushMono = player.gameObject.AddComponent<AmbushEffect>();
+            ambushMono.player = player;
+            ambushMono.block = block;
+            ambushMono.data = data;
             block.cdAdd += 2.5f;
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
             //Run when the card is removed from the player
+            var ambushMono = player.gameObject.AddComponent<AmbushEffect>();
+            UnityEngine.GameObject.Destroy(ambushMono);
         }
 
         protected override string GetTitle()
