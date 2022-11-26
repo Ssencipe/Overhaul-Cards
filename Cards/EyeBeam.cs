@@ -16,6 +16,7 @@ namespace OverhaulCards.Cards
         {
             //Edits values on card itself, which are then applied to the player in `ApplyCardStats`
             cardInfo.allowMultiple = false;
+            gun.ammo = 1;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -25,7 +26,6 @@ namespace OverhaulCards.Cards
             gunAmmo.reloadTimeMultiplier *= 0.00001f;
             gun.gravity *= 0f;
             gun.attackSpeed *= 0.00001f;
-            gunAmmo.maxAmmo += 1;
             gun.knockback *= -0.00001f;
 
         }
@@ -56,13 +56,6 @@ namespace OverhaulCards.Cards
             {
                 new CardInfoStat()
                 {
-                    positive = false,
-                    stat = "Ammo",
-                    amount = "Only 1",
-                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
-                },
-                new CardInfoStat()
-                {
                     positive = true,
                     stat = "Bullet Gravity",
                     amount = "0%",
@@ -70,16 +63,23 @@ namespace OverhaulCards.Cards
                 },
                 new CardInfoStat()
                 {
-                    positive = false,
-                    stat = "Damage",
-                    amount = "-96.7%",
+                    positive = true,
+                    stat = "Attack Speed",
+                    amount = "900,000%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()
                 {
-                    positive = true,
-                    stat = "Attack Speed",
-                    amount = "900,000%",
+                    positive = false,
+                    stat = "Ammo",
+                    amount = "Only 1",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
+                },
+                new CardInfoStat()
+                {
+                    positive = false,
+                    stat = "Damage",
+                    amount = "-96.7%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()

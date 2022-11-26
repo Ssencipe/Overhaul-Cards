@@ -25,7 +25,7 @@ namespace OverhaulCards.Cards
             ambushEffect.player = player;
             ambushEffect.block = block;
             ambushEffect.data = data;
-            block.cdAdd += 1f;
+            block.cdAdd += 2.5f;
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -56,7 +56,7 @@ namespace OverhaulCards.Cards
                 {
                     positive = false,
                     stat = "Block Cooldown",
-                    amount = "+1s",
+                    amount = "2.5s",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
             };

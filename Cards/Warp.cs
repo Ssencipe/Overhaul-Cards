@@ -25,7 +25,7 @@ namespace OverhaulCards.Cards
             warpEffect.block = block;
             warpEffect.data = data;
             statModifiers.health *= 1.25f;
-            block.cdMultiplier *= 0.25f;
+            block.cdMultiplier *= 0.5f;
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -63,7 +63,7 @@ namespace OverhaulCards.Cards
                 {
                     positive = true,
                     stat = "Block Cooldown",
-                    amount = "-75%",
+                    amount = "-50%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
             };
