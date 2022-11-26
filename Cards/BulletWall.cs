@@ -74,7 +74,7 @@ namespace OverhaulCards.Cards
                 new CardInfoStat()
                 {
                     positive = true,
-                    stat = "Gravity",
+                    stat = "Bullet Gravity",
                     amount = "0%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
