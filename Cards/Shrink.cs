@@ -35,7 +35,7 @@ namespace OverhaulCards.Cards
         }
         protected override string GetDescription()
         {
-            return "Bullets do more damage up close do less as they travel.";
+            return "Bullets do more damage up close but do less as they travel.";
         }
         protected override GameObject GetCardArt()
         {

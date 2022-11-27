@@ -25,7 +25,7 @@ namespace OverhaulCards.Cards
             gun.spread += 0.5f;
             gun.bulletDamageMultiplier *= 2f;
             gun.projectielSimulatonSpeed *= 1.5f;
-            gun.projectileSpeed *= 0.35f;
+            gun.projectileSpeed *= 0.5f;
 
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
@@ -47,7 +47,7 @@ namespace OverhaulCards.Cards
         }
         protected override CardInfo.Rarity GetRarity()
         {
-            return CardInfo.Rarity.Uncommon;
+            return CardInfo.Rarity.Rare;
         }
         protected override CardInfoStat[] GetStats()
         {
@@ -92,7 +92,7 @@ namespace OverhaulCards.Cards
                 {
                     positive = false,
                     stat = "Bullet Speed",
-                    amount = "-65%",
+                    amount = "-50%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
             };

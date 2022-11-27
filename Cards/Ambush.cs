@@ -25,7 +25,7 @@ namespace OverhaulCards.Cards
             ambushMono.player = player;
             ambushMono.block = block;
             ambushMono.data = data;
-            block.cdAdd += 2.5f;
+            block.cdAdd += 3f;
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -40,7 +40,7 @@ namespace OverhaulCards.Cards
         }
         protected override string GetDescription()
         {
-            return "Teleports you to random opponent when blocking.";
+            return "Teleports you to random opponent and temporaily reduces attack and move speed when blocking.";
         }
         protected override GameObject GetCardArt()
         {
@@ -58,7 +58,21 @@ namespace OverhaulCards.Cards
                 {
                     positive = false,
                     stat = "Block Cooldown",
-                    amount = "2.5s",
+                    amount = "3s",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
+                },
+                new CardInfoStat()
+                {
+                    positive = false,
+                    stat = "Attack Speed on Block",
+                    amount = "-33%",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
+                },
+                new CardInfoStat()
+                {
+                    positive = false,
+                    stat = "Move Speed on Block",
+                    amount = "-33%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
             };

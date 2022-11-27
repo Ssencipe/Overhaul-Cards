@@ -21,8 +21,8 @@ namespace OverhaulCards.Cards
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
             //Edits values on player when card is selected
-            gun.bulletDamageMultiplier *= 0.033f;
-            gun.destroyBulletAfter = 0.2f;
+            gun.bulletDamageMultiplier *= 0.001f;
+            gun.destroyBulletAfter = 0.15f;
             gunAmmo.reloadTimeMultiplier *= 0.00001f;
             gun.gravity *= 0f;
             gun.attackSpeed *= 0.00001f;
@@ -79,14 +79,14 @@ namespace OverhaulCards.Cards
                 {
                     positive = false,
                     stat = "Damage",
-                    amount = "-96.7%",
+                    amount = "-99%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()
                 {
                     positive = false,
                     stat = "Bullet Life",
-                    amount = "0.2s",
+                    amount = "0.15s",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()

@@ -26,6 +26,8 @@ namespace OverhaulCards.MonoBehaviours
 
         private Player target;
 
+        private float duration = 0;
+
         private void Awake()
         {
             player = gameObject.GetComponent<Player>();
@@ -40,6 +42,30 @@ namespace OverhaulCards.MonoBehaviours
             target = PlayerManager.instance.GetOtherPlayer(GetComponentInParent<Player>());
             player.GetComponentInParent<PlayerCollision>().IgnoreWallForFrames(2);
             transform.root.transform.position = target.transform.position + (target.transform.position - transform.position).normalized;
+
+            if (duration <= 0)
+            {
+                ApplyModifiers();
+            }
+            duration = 2f;
+            ColorEffect effect = player.gameObject.AddComponent<ColorEffect>();
+            effect.SetColor(Color.black);
+            characterStatModifiers.attackSpeedMultiplier = 0.67f;
+            characterStatModifiers.movementSpeed = 0.67f;
+        }
+        public override void OnUpdate()
+        {
+            if (!(duration <= 0))
+            {
+                duration -= TimeHandler.deltaTime;
+            }
+            else
+            {
+                ClearModifiers();
+                UnityEngine.GameObject.Destroy(this.gameObject.GetOrAddComponent<ColorEffect>());
+                characterStatModifiers.attackSpeedMultiplier = 1f;
+                characterStatModifiers.movementSpeed = 1f;
+            }
         }
         public override void OnOnDestroy()
         {

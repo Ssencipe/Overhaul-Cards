@@ -22,8 +22,7 @@ namespace OverhaulCards.Cards
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
             //Edits values on player when card is selected
-            statModifiers.health *= 1.2f;
-            block.cdAdd += 0.25f;
+            statModifiers.health *= 1.25f;
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -54,16 +53,9 @@ namespace OverhaulCards.Cards
                 {
                     positive = true,
                     stat = "Health",
-                    amount = "+20%",
+                    amount = "+25%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
-                new CardInfoStat()
-                {
-                    positive = false,
-                    stat = "Block Cooldown",
-                    amount = "+0.25s",
-                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
-                }
             };
         }
 
