@@ -45,7 +45,7 @@ namespace OverhaulCards.Cards
             CustomCard.BuildCard<Warp>();
             CustomCard.BuildCard<Flea>();
             CustomCard.BuildCard<Ambush>();
-            CustomCard.BuildCard<Invert>();
+            //CustomCard.BuildCard<Invert>();
             CustomCard.BuildCard<Embiggen>();
             CustomCard.BuildCard<Minimize>();
             CustomCard.BuildCard<Begone>();
