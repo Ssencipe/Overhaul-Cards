@@ -20,8 +20,7 @@ namespace OverhaulCards.Cards
 {
     class Invert : CustomCard
     {
-        private static float rangePerCard = 5f;
-        private static float durationPerCard = 2f;
+        public const float InvertDuration = 3f;
 
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers, Block block)
         {
@@ -29,16 +28,13 @@ namespace OverhaulCards.Cards
 
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
-            InvertEffect gravityMono = player.gameObject.AddComponent<InvertEffect>();
-            block.objectsToSpawn.Add(InvertEffect.invertVisual);
             block.cdAdd += 1f;
-            block.GetAdditionalData().invertRange += Invert.rangePerCard;
-            block.GetAdditionalData().invertDuration += Invert.durationPerCard;
+            player.IncrementCardEffect<InvertEffect>();
         }
 
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
-
+            player.DecrementCardEffect<InvertEffect>();
         }
 
         protected override string GetTitle()

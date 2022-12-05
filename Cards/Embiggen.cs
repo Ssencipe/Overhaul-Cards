@@ -13,22 +13,20 @@ namespace OverhaulCards.Cards
 {
     class Embiggen : CustomCard
     {
+        public const float EmbiggenDuration = 2.5f;
+
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers, Block block)
         {
-            //Edits values on card itself, which are then applied to the player in `ApplyCardStats`
-            cardInfo.allowMultiple = false;
+
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
-            //Edits values on player when card is selected
-            var embiggenMono = player.gameObject.GetOrAddComponent<EmbiggenEffect>();
+            player.IncrementCardEffect<EmbiggenEffect>();
             block.cdAdd += 1f;
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
-            //Run when the card is removed from the player
-            var embiggenMono = player.gameObject.GetOrAddComponent<EmbiggenEffect>();
-            UnityEngine.GameObject.Destroy(embiggenMono);
+            player.DecrementCardEffect<EmbiggenEffect>();
         }
 
         protected override string GetTitle()

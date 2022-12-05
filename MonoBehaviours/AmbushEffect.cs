@@ -28,10 +28,6 @@ namespace OverhaulCards.MonoBehaviours
 
         private float duration = 0;
 
-        private void Awake()
-        {
-            player = gameObject.GetComponent<Player>();
-        }
         public override void OnStart()
         {
             block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Combine(block.BlockAction, new Action<BlockTrigger.BlockTriggerType>(OnBlock));

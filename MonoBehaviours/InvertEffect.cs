@@ -13,6 +13,7 @@ using UnityEngine;
 using UnboundLib.Utils;
 using ModdingUtils.MonoBehaviours;
 using OverhaulCards.Extensions;
+using OverhaulCards.Cards;
 using System.Collections.ObjectModel;
 using Sonigon;
 using Sonigon.Internal;
@@ -23,55 +24,93 @@ using ModdingUtils.Extensions;
 
 namespace OverhaulCards.MonoBehaviours
 {
-    public class InvertEffect : ReversibleEffect
+    public class InvertEffect : MonoBehaviour, ISingletonEffect
     {
-        private readonly float maxDistance = 8f;
+        public int CardAmount { get; set; } = 0;
+
         public Block block;
         public Player player;
         public CharacterData data;
         public Gun gun;
-        private Action<BlockTrigger.BlockTriggerType> inv;
-        private Action<BlockTrigger.BlockTriggerType> basic;
+        private bool active = false;
+        private float timeStarted = 0;
+        private List<Player> enemies = new List<Player>();
+        private List<Player> affected = new List<Player>();
         private static GameObject invertvisual = null;
         private readonly float updateDelay = 0.1f;
         private readonly float effectCooldown = 0.1f;
         private float startTime;
         private float timeOfLastEffect;
-        private bool canTrigger;
         private bool hasTriggered;
         public int numcheck = 0;
-        public float duration = 2f;
-        public float initialGrav = 0f;
-        public float initialSpeed = 0f;
+        private float counter = 0;
 
-        private void Start()
+        public void Activate()
         {
-            this.player = this.GetComponent<Player>();
-            this.block = this.GetComponent<Block>();
-            this.data = this.GetComponent<CharacterData>();
-            this.gun = this.GetComponent<Gun>();
-            this.ResetEffectTimer();
-            this.ResetTimer();
-            this.canTrigger = true;
-            this.hasTriggered = false;
-            this.basic = this.block.BlockAction;
-
-            bool flag = this.block;
-            if (flag)
+            counter += Cards.Invert.InvertDuration * CardAmount;
+            if (!active)
             {
-                this.inv = new Action<BlockTrigger.BlockTriggerType>(this.GetDoBlockAction(this.player, this.block).Invoke);
-                this.block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Combine(this.block.BlockAction, this.inv);
+                enemies = PlayerManager.instance.players.Where(p => p.teamID != player.teamID).ToList();
+                timeStarted = Time.time;
+
+                active = true;
             }
         }
 
-        public void Destroy()
+        public void FixedUpdate()
         {
-            UnityEngine.Object.Destroy(this);
+            if (active)
+            {
+                if (Time.time - timeStarted > Invert.InvertDuration * CardAmount)
+                {
+                    active = false;
+                }
+                else
+                {
+                    foreach (Player enemy in enemies)
+                    {
+                        Vector3 dir = enemy.transform.position - player.transform.position;
+                        float distance = dir.magnitude;
+                        dir.Normalize();
+
+                        float distance_squared = Mathf.Clamp(distance * distance, 20f, float.MaxValue);
+
+                        if (distance <= 1.5f)
+                        {
+                            affected.Add(enemy);
+                            enemy.GetComponentInChildren<Gravity>().gravityForce = -100f;
+                            enemy.GetComponentInChildren<CharacterStatModifiers>().movementSpeed = 0.1f;
+
+                        }
+                    }
+                }
+            }
         }
 
+        public void Start()
+        {
+            player = gameObject.GetComponentInParent<Player>();
+            block = player.GetComponent<Block>();
+            block.BlockAction += OnBlock;
+        }
+
+        public void UpdateEffects()
+        {
+
+        }
         public void OnDestroy()
         {
-            this.block.BlockAction = this.basic;
+            block.BlockAction -= OnBlock;
+        }
+
+        private void OnBlock(BlockTrigger.BlockTriggerType trigger)
+        {
+            if (trigger == BlockTrigger.BlockTriggerType.Default ||
+                trigger == BlockTrigger.BlockTriggerType.Echo ||
+                trigger == BlockTrigger.BlockTriggerType.ShieldCharge)
+            {
+                Activate();
+            }
         }
 
         private void Update()
@@ -89,32 +128,21 @@ namespace OverhaulCards.MonoBehaviours
                     i++;
                 }
 
-                if (numcheck > 0)
+                if (Time.time >= this.timeOfLastEffect + this.effectCooldown)
                 {
-                    this.ResetTimer();
-
-                    if (Time.time >= this.timeOfLastEffect + this.effectCooldown)
+                    if (!block.objectsToSpawn.Contains(InvertEffect.invertVisual))
                     {
-                        if (!block.objectsToSpawn.Contains(InvertEffect.invertVisual))
-                        {
-                            block.objectsToSpawn.Add(InvertEffect.invertVisual);
-                        }
-                        this.canTrigger = true;
-                    }
-
-                    else
-                    {
-                        if (block.objectsToSpawn.Contains(InvertEffect.invertVisual))
-                        {
-                            block.objectsToSpawn.Remove(InvertEffect.invertVisual);
-                        }
-
+                        block.objectsToSpawn.Add(InvertEffect.invertVisual);
                     }
                 }
 
                 else
                 {
-                    UnityEngine.Object.Destroy(this);
+                    if (block.objectsToSpawn.Contains(InvertEffect.invertVisual))
+                    {
+                        block.objectsToSpawn.Remove(InvertEffect.invertVisual);
+                    }
+
                 }
             }
 
@@ -125,49 +153,35 @@ namespace OverhaulCards.MonoBehaviours
         {
             return delegate (BlockTrigger.BlockTriggerType trigger)
             {
-                bool flag = trigger != BlockTrigger.BlockTriggerType.None;
-                if (flag)
+                if (active)
                 {
-                    Vector2 a = block.transform.position;
-                    Player[] array = PlayerManager.instance.players.ToArray();
-                    for (int i = 0; i < array.Length; i++)
+                    if (Time.time - timeStarted > Invert.InvertDuration * CardAmount)
                     {
-                        bool flag2 = array[i].playerID == player.playerID;
-                        if (!flag2)
+                        active = false;
+                    }
+                    else
+                    {
+                        foreach (Player enemy in enemies)
                         {
-                            bool flag3 = Vector2.Distance(a, array[i].transform.position) < this.maxDistance && PlayerManager.instance.CanSeePlayer(player.transform.position, array[i]).canSee;
-                            if (flag3)
+                            Vector3 dir = enemy.transform.position - player.transform.position;
+                            float distance = dir.magnitude;
+                            dir.Normalize();
+
+                            float distance_squared = Mathf.Clamp(distance * distance, 20f, float.MaxValue);
+
+                            if (distance <= 1.5f * CardAmount)
                             {
-                                HealthHandler component = array[i].transform.GetComponent<HealthHandler>();
-                                if (this.canTrigger)
-                                {
-                                    initialSpeed = array[i].GetComponent<CharacterStatModifiers>().movementSpeed;
-                                    initialGrav = array[i].GetComponentInChildren<Gravity>().gravityForce;
-                                    array[i].GetComponentInChildren<CharacterStatModifiers>().movementSpeed = 0.1f;
-                                    array[i].GetComponentInChildren<Gravity>().gravityForce = -100f;
-                                }
+                                affected.Add(enemy);
+                                enemy.GetComponentInChildren<Gravity>().gravityForce = -100f;
+                                enemy.GetComponentInChildren<CharacterStatModifiers>().movementSpeed = 0.1f;
                             }
                         }
-                    }
-                    if (this.hasTriggered)
-                    {
-                        this.hasTriggered = false;
-                        this.canTrigger = false;
-                        this.ResetEffectTimer();
                     }
                 }
             };
         }
 
-        private void ResetTimer()
-        {
-            this.startTime = Time.time;
-            numcheck = 0;
-        }
-        private void ResetEffectTimer()
-        {
-            this.timeOfLastEffect = Time.time;
-        }
+
 
         public static GameObject invertVisual
         {
@@ -214,6 +228,7 @@ namespace OverhaulCards.MonoBehaviours
             }
             set
             {
+
             }
         }
         private class InvertSpawner : MonoBehaviour

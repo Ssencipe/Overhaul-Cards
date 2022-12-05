@@ -16,52 +16,77 @@ using ModdingUtils.MonoBehaviours;
 
 namespace OverhaulCards.MonoBehaviours
 {
-    internal class MinimizeEffect : ReversibleEffect
+    public class MinimizeEffect : CounterReversibleEffect, ISingletonEffect
     {
-        private float duration = 0;
-        public override void OnOnDestroy()
+        public int CardAmount { get; set; } = 0;
+
+        private float counter = 0;
+        private bool modifiersActive = false;
+
+        public void Activate()
         {
-            block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Remove(block.BlockAction, new Action<BlockTrigger.BlockTriggerType>(OnBlock));
+            counter += Cards.Embiggen.EmbiggenDuration * CardAmount;
         }
-        private void OnBlock(BlockTrigger.BlockTriggerType trigger)
+
+        public override CounterStatus UpdateCounter()
         {
-            if (duration <= 0)
+            counter -= TimeHandler.deltaTime;
+            if (!modifiersActive && counter > 0)
             {
-                ApplyModifiers();
+                return CounterStatus.Apply;
             }
-            duration = 2.5f;
+            else if (counter <= 0)
+            {
+                Reset();
+                return CounterStatus.Remove;
+            }
+            return CounterStatus.Wait;
+        }
+
+        public override void UpdateEffects()
+        {
             ColorEffect effect = player.gameObject.AddComponent<ColorEffect>();
             effect.SetColor(Color.red);
-            characterDataModifier.maxHealth_mult = 1f;
-            characterDataModifier.health_mult = 1f;
-            characterStatModifiers.sizeMultiplier = 1f;
-            characterStatModifiers.movementSpeed = 2f;
+            gunStatModifier.damage_mult = 0.5f;
+            characterStatModifiersModifier.sizeMultiplier_mult = 0.5f;
+            characterStatModifiersModifier.movementSpeed_add = 2f;
+        }
+
+        public override void OnApply()
+        {
+            modifiersActive = true;
+        }
+        public override void OnRemove()
+        {
+            modifiersActive = false;
+            UnityEngine.GameObject.Destroy(this.gameObject.GetOrAddComponent<ColorEffect>());
+        }
+        public override void Reset()
+        {
+            counter = 0;
+            modifiersActive = false;
         }
 
         public override void OnStart()
         {
-            block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Combine(block.BlockAction, new Action<BlockTrigger.BlockTriggerType>(OnBlock));
+            applyImmediately = false;
             SetLivesToEffect(int.MaxValue);
+
+            block.BlockAction += OnBlock;
         }
-        public override void OnUpdate()
+        public override void OnOnDestroy()
         {
-            if (!(duration <= 0))
-            {
-                duration -= TimeHandler.deltaTime;
-            }
-            else
-            {
-                ClearModifiers();
-                UnityEngine.GameObject.Destroy(this.gameObject.GetOrAddComponent<ColorEffect>());
-                characterDataModifier.maxHealth_mult = 0.5f;
-                characterDataModifier.health_mult = 0.5f;
-                characterStatModifiers.sizeMultiplier = 0.5f;
-                characterStatModifiers.movementSpeed = 1f;
-            }
+            block.BlockAction -= OnBlock;
         }
-        public override void OnOnDisable()
+
+        private void OnBlock(BlockTrigger.BlockTriggerType trigger)
         {
-            duration = 0;
+            if (trigger == BlockTrigger.BlockTriggerType.Default ||
+                trigger == BlockTrigger.BlockTriggerType.Echo ||
+                trigger == BlockTrigger.BlockTriggerType.ShieldCharge)
+            {
+                Activate();
+            }
         }
     }
 }
