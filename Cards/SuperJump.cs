@@ -35,7 +35,7 @@ namespace OverhaulCards.Cards
         }
         protected override string GetDescription()
         {
-            return "Blocking triggers an upwards jump.";
+            return "Blocking triggers a massive jump.";
         }
         protected override GameObject GetCardArt()
         {
