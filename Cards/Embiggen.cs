@@ -22,7 +22,7 @@ namespace OverhaulCards.Cards
         {
             //Edits values on player when card is selected
             var embiggenMono = player.gameObject.GetOrAddComponent<EmbiggenEffect>();
-            block.cdAdd = 2.5f;
+            block.cdAdd += 1f;
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -55,7 +55,7 @@ namespace OverhaulCards.Cards
                 {
                     positive = false,
                     stat = "Block Cooldown",
-                    amount = "2.5s",
+                    amount = "1s",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
             };

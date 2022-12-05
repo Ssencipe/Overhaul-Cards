@@ -20,18 +20,23 @@ namespace OverhaulCards.Cards
 {
     class Invert : CustomCard
     {
-        public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
-        {
+        private static float rangePerCard = 5f;
+        private static float durationPerCard = 2f;
 
+        public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers, Block block)
+        {
         }
+
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
-            InvertEffect invertEffect = player.gameObject.AddComponent<InvertEffect>();
+            InvertEffect gravityMono = player.gameObject.AddComponent<InvertEffect>();
             block.objectsToSpawn.Add(InvertEffect.invertVisual);
-            characterStats.movementSpeed *= 1.20f;
-            block.cooldown += 0.5f;
+            block.cdAdd += 1f;
+            block.GetAdditionalData().invertRange += Invert.rangePerCard;
+            block.GetAdditionalData().invertDuration += Invert.durationPerCard;
         }
-        public override void OnRemoveCard()
+
+        public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
 
         }
@@ -40,29 +45,40 @@ namespace OverhaulCards.Cards
         {
             return "Invert";
         }
+
         protected override string GetDescription()
         {
-            return "Teleports you to random opponent on block.";
+            return "Blocking inverts nearby enemies' gravity and slows them temporarily.";
         }
+
         protected override GameObject GetCardArt()
         {
             return null;
         }
+
         protected override CardInfo.Rarity GetRarity()
         {
-            return CardInfo.Rarity.Rare;
+            return CardInfo.Rarity.Common;
         }
+
         protected override CardInfoStat[] GetStats()
         {
             return new CardInfoStat[]
             {
-                new CardInfoStat()
+                new CardInfoStat
                 {
                     positive = false,
                     stat = "Block Cooldown",
                     amount = "+1s",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
+                new CardInfoStat
+                {
+                    positive = false,
+                    stat = "Ability Cooldown",
+                    amount = "0.1s",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
+                }
             };
         }
 
@@ -70,6 +86,7 @@ namespace OverhaulCards.Cards
         {
             return CardThemeColor.CardThemeColorType.EvilPurple;
         }
+
         public override string GetModName()
         {
             return "OHC";

@@ -10,6 +10,7 @@ namespace OverhaulCards.Extensions
     {
         public float invertRange;
         public float invertDuration;
+        public float begoneRange;
         public float timeOfLastSuccessfulBlock;
 
 
@@ -17,6 +18,7 @@ namespace OverhaulCards.Extensions
         {
             invertRange = 0f;
             invertDuration = 0f;
+            begoneRange = 0f;
             timeOfLastSuccessfulBlock = -100f;
         }
     }
@@ -48,6 +50,7 @@ namespace OverhaulCards.Extensions
 
             __instance.GetAdditionalData().invertRange = 0f;
             __instance.GetAdditionalData().invertDuration = 0f;
+            __instance.GetAdditionalData().begoneRange = 0f;
             __instance.GetAdditionalData().timeOfLastSuccessfulBlock = -100f;
 
 

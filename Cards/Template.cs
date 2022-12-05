@@ -1,12 +1,24 @@
 ﻿using ModsPlus;
 using System;
+using Photon.Pun;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using UnboundLib;
 using UnboundLib.Cards;
+using UnboundLib.Networking;
 using UnityEngine;
+using UnboundLib.Utils;
+using UnboundLib.Extensions;
+using ModdingUtils.MonoBehaviours;
+using ModdingUtils.RoundsEffects;
+using OverhaulCards.Extensions;
+using Sonigon;
+using Sonigon.Internal;
+using SoundImplementation;
 
 namespace OverhaulCards.Cards
 {

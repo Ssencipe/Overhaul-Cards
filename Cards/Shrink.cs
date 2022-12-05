@@ -23,6 +23,7 @@ namespace OverhaulCards.Cards
             gun.damageAfterDistanceMultiplier *= -0.25f;
             gun.bulletDamageMultiplier *= 3f;
             gun.size *= -5f;
+            gun.projectileColor += new Color(0f, 0f, 1f, 1f);
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {

@@ -37,21 +37,18 @@ namespace OverhaulCards.Cards
             instance = this;
             CustomCard.BuildCard<SuperJump>();
             CustomCard.BuildCard<LegDay>();
-            CustomCard.BuildCard<Impact>();
-            CustomCard.BuildCard<WaveForm>();
             CustomCard.BuildCard<Shrink>();
             CustomCard.BuildCard<Gunslinger>();
             CustomCard.BuildCard<Bulletslinger>();
+            CustomCard.BuildCard<Corpuslinger>();
             CustomCard.BuildCard<Delay>();
             CustomCard.BuildCard<Warp>();
-            CustomCard.BuildCard<Porcupine>();
             CustomCard.BuildCard<Flea>();
-            CustomCard.BuildCard<BulletWall>();
             CustomCard.BuildCard<Ambush>();
-            CustomCard.BuildCard<EyeBeam>();
-            //CustomCard.BuildCard<Invert>();
+            CustomCard.BuildCard<Invert>();
             CustomCard.BuildCard<Embiggen>();
             CustomCard.BuildCard<Minimize>();
+            CustomCard.BuildCard<Begone>();
         }
     }
 }

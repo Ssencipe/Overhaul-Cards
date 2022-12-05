@@ -15,7 +15,7 @@ namespace OverhaulCards.Cards
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers, Block block)
         {
             //Edits values on card itself, which are then applied to the player in `ApplyCardStats`
-            gun.timeBetweenBullets = 2f;
+            gun.timeBetweenBullets = 1.5f;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -28,9 +28,9 @@ namespace OverhaulCards.Cards
             {
                 gun.bursts += 1;
             }
-            if (gun.timeBetweenBullets > 2f)
+            if (gun.timeBetweenBullets > 1.5f)
             {
-                gun.timeBetweenBullets = 2f;
+                gun.timeBetweenBullets = 1.5f;
             }
             gun.projectileColor += new Color(1f, 0f, 1f, 1f);
         }

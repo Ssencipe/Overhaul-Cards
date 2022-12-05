@@ -10,22 +10,19 @@ using UnityEngine;
 
 namespace OverhaulCards.Cards
 {
-    class Porcupine : CustomCard
+    class Corpuslinger : CustomCard
     {
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers, Block block)
         {
             //Edits values on card itself, which are then applied to the player in `ApplyCardStats`
-            cardInfo.allowMultiple = false;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
             //Edits values on player when card is selected
-            gunAmmo.maxAmmo += 12;
-            gun.numberOfProjectiles += 15;
-            gun.spread += 0.5f;
-            gun.bulletDamageMultiplier *= 2f;
-            gun.projectielSimulatonSpeed *= 1.5f;
-            gun.projectileSpeed *= 0.5f;
+            characterStats.health *= 1.1f;
+            characterStats.movementSpeed *= 1.1f;
+            block.cdMultiplier *= 0.9f;
+            characterStats.jump *= 1.1f;
 
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
@@ -35,11 +32,11 @@ namespace OverhaulCards.Cards
 
         protected override string GetTitle()
         {
-            return "Porcupine";
+            return "Corpuslinger";
         }
         protected override string GetDescription()
         {
-            return "Shoot several bullets with high damage, but also high spread and low distance.";
+            return "Minor improvements to all body stats.";
         }
         protected override GameObject GetCardArt()
         {
@@ -47,7 +44,7 @@ namespace OverhaulCards.Cards
         }
         protected override CardInfo.Rarity GetRarity()
         {
-            return CardInfo.Rarity.Rare;
+            return CardInfo.Rarity.Common;
         }
         protected override CardInfoStat[] GetStats()
         {
@@ -56,45 +53,32 @@ namespace OverhaulCards.Cards
                 new CardInfoStat()
                 {
                     positive = true,
-                    stat = "Ammo",
-                    amount = "+12",
+                    stat = "Health",
+                    amount = "+10%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()
                 {
                     positive = true,
-                    stat = "Bullets",
-                    amount = "+15",
+                    stat = "Movement Speed",
+                    amount = "+10%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()
                 {
                     positive = true,
-                    stat = "Damage",
-                    amount = "+100%",
+                    stat = "Jump Height",
+                    amount = "+10%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()
                 {
                     positive = true,
-                    stat = "Projectile Speed",
-                    amount = "+50%",
+                    stat = "Block Cooldown",
+                    amount = "-10%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
-                new CardInfoStat()
-                {
-                    positive = false,
-                    stat = "Spread",
-                    amount = "180 degree",
-                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
-                },
-                new CardInfoStat()
-                {
-                    positive = false,
-                    stat = "Bullet Speed",
-                    amount = "-50%",
-                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
-                },
+
             };
         }
 

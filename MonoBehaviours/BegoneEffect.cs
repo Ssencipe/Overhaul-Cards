@@ -23,16 +23,16 @@ using ModdingUtils.Extensions;
 
 namespace OverhaulCards.MonoBehaviours
 {
-    public class InvertEffect : ReversibleEffect
+    public class BegoneEffect : MonoBehaviour
     {
         private readonly float maxDistance = 8f;
         public Block block;
         public Player player;
         public CharacterData data;
         public Gun gun;
-        private Action<BlockTrigger.BlockTriggerType> inv;
+        private Action<BlockTrigger.BlockTriggerType> begoner;
         private Action<BlockTrigger.BlockTriggerType> basic;
-        private static GameObject invertvisual = null;
+        private static GameObject begonevisual = null;
         private readonly float updateDelay = 0.1f;
         private readonly float effectCooldown = 0.1f;
         private float startTime;
@@ -40,9 +40,7 @@ namespace OverhaulCards.MonoBehaviours
         private bool canTrigger;
         private bool hasTriggered;
         public int numcheck = 0;
-        public float duration = 2f;
-        public float initialGrav = 0f;
-        public float initialSpeed = 0f;
+        private Vector3 initialPos;
 
         private void Start()
         {
@@ -59,8 +57,8 @@ namespace OverhaulCards.MonoBehaviours
             bool flag = this.block;
             if (flag)
             {
-                this.inv = new Action<BlockTrigger.BlockTriggerType>(this.GetDoBlockAction(this.player, this.block).Invoke);
-                this.block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Combine(this.block.BlockAction, this.inv);
+                this.begoner = new Action<BlockTrigger.BlockTriggerType>(this.GetDoBlockAction(this.player, this.block).Invoke);
+                this.block.BlockAction = (Action<BlockTrigger.BlockTriggerType>)Delegate.Combine(this.block.BlockAction, this.begoner);
             }
         }
 
@@ -81,7 +79,7 @@ namespace OverhaulCards.MonoBehaviours
                 int i = 0;
                 while (i <= this.player.data.currentCards.Count - 1)
                 {
-                    if (this.player.data.currentCards[i].cardName == "Invert")
+                    if (this.player.data.currentCards[i].cardName == "Begone")
                     {
                         this.numcheck += 1;
                     }
@@ -95,18 +93,18 @@ namespace OverhaulCards.MonoBehaviours
 
                     if (Time.time >= this.timeOfLastEffect + this.effectCooldown)
                     {
-                        if (!block.objectsToSpawn.Contains(InvertEffect.invertVisual))
+                        if (!block.objectsToSpawn.Contains(BegoneEffect.begoneVisual))
                         {
-                            block.objectsToSpawn.Add(InvertEffect.invertVisual);
+                            block.objectsToSpawn.Add(BegoneEffect.begoneVisual);
                         }
                         this.canTrigger = true;
                     }
 
                     else
                     {
-                        if (block.objectsToSpawn.Contains(InvertEffect.invertVisual))
+                        if (block.objectsToSpawn.Contains(BegoneEffect.begoneVisual))
                         {
-                            block.objectsToSpawn.Remove(InvertEffect.invertVisual);
+                            block.objectsToSpawn.Remove(BegoneEffect.begoneVisual);
                         }
 
                     }
@@ -141,10 +139,12 @@ namespace OverhaulCards.MonoBehaviours
                                 HealthHandler component = array[i].transform.GetComponent<HealthHandler>();
                                 if (this.canTrigger)
                                 {
-                                    initialSpeed = array[i].GetComponent<CharacterStatModifiers>().movementSpeed;
-                                    initialGrav = array[i].GetComponentInChildren<Gravity>().gravityForce;
-                                    array[i].GetComponentInChildren<CharacterStatModifiers>().movementSpeed = 0.1f;
-                                    array[i].GetComponentInChildren<Gravity>().gravityForce = -100f;
+                                    initialPos.x = player.transform.position.x;
+                                    initialPos.y = player.transform.position.y;
+                                    initialPos.x += UnityEngine.Random.Range(-15f, 15f);
+                                    initialPos.y += UnityEngine.Random.Range(-5f, 10f);
+                                    array[i].GetComponentInParent<PlayerCollision>().IgnoreWallForFrames(2);
+                                    array[i].transform.position = new Vector3(initialPos.x, initialPos.y, player.transform.position.z);
                                 }
                             }
                         }
@@ -169,15 +169,15 @@ namespace OverhaulCards.MonoBehaviours
             this.timeOfLastEffect = Time.time;
         }
 
-        public static GameObject invertVisual
+        public static GameObject begoneVisual
         {
             get
             {
-                bool flag = InvertEffect.invertvisual != null;
+                bool flag = BegoneEffect.begonevisual != null;
                 GameObject result;
                 if (flag)
                 {
-                    result = InvertEffect.invertvisual;
+                    result = BegoneEffect.begonevisual;
                 }
                 else
                 {
@@ -187,28 +187,28 @@ namespace OverhaulCards.MonoBehaviours
                     GameObject original = (from card in source
                                            where card.cardName.ToLower() == "overpower"
                                            select card).First<CardInfo>().GetComponent<CharacterStatModifiers>().AddObjectToPlayer.GetComponent<SpawnObjects>().objectToSpawn[0];
-                    InvertEffect.invertvisual = UnityEngine.Object.Instantiate<GameObject>(original, new Vector3(0f, 100000f, 0f), Quaternion.identity);
-                    InvertEffect.invertvisual.name = "E_Invert";
-                    UnityEngine.Object.DontDestroyOnLoad(InvertEffect.invertvisual);
-                    foreach (ParticleSystem particleSystem in InvertEffect.invertvisual.GetComponentsInChildren<ParticleSystem>())
+                    BegoneEffect.begonevisual = UnityEngine.Object.Instantiate<GameObject>(original, new Vector3(0f, 100000f, 0f), Quaternion.identity);
+                    BegoneEffect.begonevisual.name = "E_Begone";
+                    UnityEngine.Object.DontDestroyOnLoad(BegoneEffect.begonevisual);
+                    foreach (ParticleSystem particleSystem in BegoneEffect.begonevisual.GetComponentsInChildren<ParticleSystem>())
                     {
-                        particleSystem.startColor = Color.yellow;
+                        particleSystem.startColor = Color.green;
                     }
-                    InvertEffect.invertvisual.transform.GetChild(1).GetComponent<LineEffect>().colorOverTime.colorKeys = new GradientColorKey[]
+                    BegoneEffect.begonevisual.transform.GetChild(1).GetComponent<LineEffect>().colorOverTime.colorKeys = new GradientColorKey[]
                     {
-                        new GradientColorKey(Color.yellow, 0f)
+                        new GradientColorKey(Color.green, 0f)
                     };
-                    UnityEngine.Object.Destroy(InvertEffect.invertvisual.transform.GetChild(2).gameObject);
-                    InvertEffect.invertvisual.transform.GetChild(1).GetComponent<LineEffect>().offsetMultiplier = 0f;
-                    InvertEffect.invertvisual.transform.GetChild(1).GetComponent<LineEffect>().playOnAwake = true;
-                    UnityEngine.Object.Destroy(InvertEffect.invertvisual.GetComponent<FollowPlayer>());
-                    InvertEffect.invertvisual.GetComponent<DelayEvent>().time = 0f;
-                    UnityEngine.Object.Destroy(InvertEffect.invertvisual.GetComponent<SoundUnityEventPlayer>());
-                    UnityEngine.Object.Destroy(InvertEffect.invertvisual.GetComponent<Explosion>());
-                    UnityEngine.Object.Destroy(InvertEffect.invertvisual.GetComponent<Explosion_Overpower>());
-                    UnityEngine.Object.Destroy(InvertEffect.invertvisual.GetComponent<RemoveAfterSeconds>());
-                    InvertSpawner inverse = InvertEffect.invertvisual.AddComponent<InvertEffect.InvertSpawner>();
-                    result = InvertEffect.invertvisual;
+                    UnityEngine.Object.Destroy(BegoneEffect.begonevisual.transform.GetChild(2).gameObject);
+                    BegoneEffect.begonevisual.transform.GetChild(1).GetComponent<LineEffect>().offsetMultiplier = 0f;
+                    BegoneEffect.begonevisual.transform.GetChild(1).GetComponent<LineEffect>().playOnAwake = true;
+                    UnityEngine.Object.Destroy(BegoneEffect.begonevisual.GetComponent<FollowPlayer>());
+                    BegoneEffect.begonevisual.GetComponent<DelayEvent>().time = 0f;
+                    UnityEngine.Object.Destroy(BegoneEffect.begonevisual.GetComponent<SoundUnityEventPlayer>());
+                    UnityEngine.Object.Destroy(BegoneEffect.begonevisual.GetComponent<Explosion>());
+                    UnityEngine.Object.Destroy(BegoneEffect.begonevisual.GetComponent<Explosion_Overpower>());
+                    UnityEngine.Object.Destroy(BegoneEffect.begonevisual.GetComponent<RemoveAfterSeconds>());
+                    BegoneSpawner goner = BegoneEffect.begonevisual.AddComponent<BegoneEffect.BegoneSpawner>();
+                    result = BegoneEffect.begonevisual;
                 }
                 return result;
             }
@@ -216,7 +216,7 @@ namespace OverhaulCards.MonoBehaviours
             {
             }
         }
-        private class InvertSpawner : MonoBehaviour
+        private class BegoneSpawner : MonoBehaviour
         {
             private void Start()
             {
