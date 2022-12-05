@@ -37,7 +37,7 @@ namespace OverhaulCards.Cards
         }
         protected override string GetDescription()
         {
-            return "Temporarily become small and gain speed but lose max health when blocking.";
+            return "Blocking temporarily decreases health and size, but increases speed.";
         }
         protected override GameObject GetCardArt()
         {

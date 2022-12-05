@@ -41,7 +41,7 @@ namespace OverhaulCards.Cards
         }
         protected override string GetDescription()
         {
-            return "Teleports you to random nearby location when blocking.";
+            return "Blocking teleports you to random nearby location.";
         }
         protected override GameObject GetCardArt()
         {
