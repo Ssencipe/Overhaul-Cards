@@ -40,7 +40,7 @@ namespace OverhaulCards.Cards
         }
         protected override string GetDescription()
         {
-            return "Blocking teleports you to random opponent and temporaily reduces attack and move speed.";
+            return "Blocking teleports a random opponent to you.";
         }
         protected override GameObject GetCardArt()
         {

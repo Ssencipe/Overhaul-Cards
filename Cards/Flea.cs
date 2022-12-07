@@ -22,7 +22,7 @@ namespace OverhaulCards.Cards
             //Edits values on player when card is selected
             characterStats.health *= 0.6f;
             characterStats.sizeMultiplier *= 0.6f;
-            characterStats.movementSpeed *= 1.5f;
+            characterStats.movementSpeed *= 10f;
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {

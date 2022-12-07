@@ -20,7 +20,7 @@ namespace OverhaulCards.Cards
     {
         private const string ModId = "ssencipe.overhaul.cards";
         private const string ModName = "OverhaulCards";
-        public const string Version = "0.0.1"; // What version are we on (major.minor.patch)?
+        public const string Version = "0.3.1";
         public const string ModInitials = "OHC";
 
         public static OverhaulCards instance { get; private set; }
@@ -35,20 +35,20 @@ namespace OverhaulCards.Cards
         void Start()
         {
             instance = this;
-            CustomCard.BuildCard<SuperJump>();
             CustomCard.BuildCard<LegDay>();
-            CustomCard.BuildCard<Shrink>();
             CustomCard.BuildCard<Gunslinger>();
             CustomCard.BuildCard<Bulletslinger>();
             CustomCard.BuildCard<Corpuslinger>();
             CustomCard.BuildCard<Delay>();
             CustomCard.BuildCard<Warp>();
             CustomCard.BuildCard<Flea>();
-            CustomCard.BuildCard<Ambush>();
+            //CustomCard.BuildCard<Ambush>();
             CustomCard.BuildCard<Invert>();
             CustomCard.BuildCard<Embiggen>();
             CustomCard.BuildCard<Minimize>();
             CustomCard.BuildCard<Begone>();
+            CustomCard.BuildCard<BoxedIn>();
+            //CustomCard.BuildCard<EndlessVolley>();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace OverhaulCards.Cards
 {
     class Invert : CustomCard
     {
-        public const float InvertDuration = 3f;
+        public const float InvertDuration = 2f;
 
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers, Block block)
         {

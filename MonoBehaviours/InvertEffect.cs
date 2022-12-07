@@ -1,30 +1,18 @@
-﻿using ModsPlus;
-using System;
-using Photon.Pun;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnboundLib;
-using UnboundLib.Cards;
-using UnboundLib.Networking;
 using UnityEngine;
 using UnboundLib.Utils;
 using ModdingUtils.MonoBehaviours;
-using OverhaulCards.Extensions;
 using OverhaulCards.Cards;
 using System.Collections.ObjectModel;
-using Sonigon;
-using Sonigon.Internal;
 using SoundImplementation;
-using ModdingUtils.RoundsEffects;
-using UnboundLib.Extensions;
 using ModdingUtils.Extensions;
 
 namespace OverhaulCards.MonoBehaviours
 {
-    public class InvertEffect : MonoBehaviour, ISingletonEffect
+    public class InvertEffect : CounterReversibleEffect, ISingletonEffect
     {
         public int CardAmount { get; set; } = 0;
 
@@ -32,7 +20,6 @@ namespace OverhaulCards.MonoBehaviours
         public Player player;
         public CharacterData data;
         public Gun gun;
-        private bool active = false;
         private float timeStarted = 0;
         private List<Player> enemies = new List<Player>();
         private List<Player> affected = new List<Player>();
@@ -41,64 +28,76 @@ namespace OverhaulCards.MonoBehaviours
         private readonly float effectCooldown = 0.1f;
         private float startTime;
         private float timeOfLastEffect;
-        private bool hasTriggered;
         public int numcheck = 0;
         private float counter = 0;
+        private bool modifiersActive = false;
 
         public void Activate()
         {
             counter += Cards.Invert.InvertDuration * CardAmount;
-            if (!active)
+            if (!modifiersActive)
             {
                 enemies = PlayerManager.instance.players.Where(p => p.teamID != player.teamID).ToList();
                 timeStarted = Time.time;
 
-                active = true;
+                modifiersActive = true;
+                UpdateEffects();
             }
         }
 
         public void FixedUpdate()
         {
-            if (active)
+            if (modifiersActive)
             {
                 if (Time.time - timeStarted > Invert.InvertDuration * CardAmount)
                 {
-                    active = false;
-                }
-                else
-                {
-                    foreach (Player enemy in enemies)
-                    {
-                        Vector3 dir = enemy.transform.position - player.transform.position;
-                        float distance = dir.magnitude;
-                        dir.Normalize();
-
-                        float distance_squared = Mathf.Clamp(distance * distance, 20f, float.MaxValue);
-
-                        if (distance <= 1.5f)
-                        {
-                            affected.Add(enemy);
-                            enemy.GetComponentInChildren<Gravity>().gravityForce = -100f;
-                            enemy.GetComponentInChildren<CharacterStatModifiers>().movementSpeed = 0.1f;
-
-                        }
-                    }
+                    modifiersActive = false;
                 }
             }
         }
 
-        public void Start()
+        public override void OnStart()
         {
             player = gameObject.GetComponentInParent<Player>();
             block = player.GetComponent<Block>();
             block.BlockAction += OnBlock;
         }
 
-        public void UpdateEffects()
+        public override CounterStatus UpdateCounter()
         {
-
+            counter -= TimeHandler.deltaTime;
+            if (!modifiersActive && counter > 0)
+            {
+                return CounterStatus.Apply;
+            }
+            else if (counter <= 0)
+            {
+                Reset();
+                return CounterStatus.Remove;
+            }
+            return CounterStatus.Wait;
         }
-        public void OnDestroy()
+
+        public override void UpdateEffects()
+        {
+            foreach (Player enemy in enemies)
+            {
+                Vector3 dir = enemy.transform.position - player.transform.position;
+                float distance = dir.magnitude;
+                dir.Normalize();
+
+                float distance_squared = Mathf.Clamp(distance * distance, 20f, float.MaxValue);
+
+                if (distance <= 2.5f * CardAmount)
+                {
+                    affected.Add(enemy);
+                    enemy.GetComponentInChildren<CharacterStatModifiersModifier>().gravity_mult *= -10f;
+                    enemy.GetComponentInChildren<CharacterStatModifiersModifier>().movementSpeed_mult *= 0.1f;
+
+                }
+            }
+        }
+        public override void OnOnDestroy()
         {
             block.BlockAction -= OnBlock;
         }
@@ -112,8 +111,21 @@ namespace OverhaulCards.MonoBehaviours
                 Activate();
             }
         }
-
-        private void Update()
+        public override void OnApply()
+        {
+            modifiersActive = true;
+        }
+        public override void OnRemove()
+        {
+            modifiersActive = false;
+        }
+        public override void Reset()
+        {
+            counter = 0;
+            modifiersActive = false;
+        }
+        //Below this point is code for block VFX
+        public override void OnUpdate()
         {
             if (Time.time >= this.startTime + this.updateDelay)
             {
@@ -147,42 +159,6 @@ namespace OverhaulCards.MonoBehaviours
             }
 
         }
-
-
-        public Action<BlockTrigger.BlockTriggerType> GetDoBlockAction(Player player, Block block)
-        {
-            return delegate (BlockTrigger.BlockTriggerType trigger)
-            {
-                if (active)
-                {
-                    if (Time.time - timeStarted > Invert.InvertDuration * CardAmount)
-                    {
-                        active = false;
-                    }
-                    else
-                    {
-                        foreach (Player enemy in enemies)
-                        {
-                            Vector3 dir = enemy.transform.position - player.transform.position;
-                            float distance = dir.magnitude;
-                            dir.Normalize();
-
-                            float distance_squared = Mathf.Clamp(distance * distance, 20f, float.MaxValue);
-
-                            if (distance <= 1.5f * CardAmount)
-                            {
-                                affected.Add(enemy);
-                                enemy.GetComponentInChildren<Gravity>().gravityForce = -100f;
-                                enemy.GetComponentInChildren<CharacterStatModifiers>().movementSpeed = 0.1f;
-                            }
-                        }
-                    }
-                }
-            };
-        }
-
-
-
         public static GameObject invertVisual
         {
             get

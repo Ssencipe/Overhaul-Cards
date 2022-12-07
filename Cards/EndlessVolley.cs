@@ -1,4 +1,5 @@
 ﻿using ModsPlus;
+using OverhaulCards.MonoBehaviours;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,20 +11,15 @@ using UnityEngine;
 
 namespace OverhaulCards.Cards
 {
-    class Shrink : CustomCard
+    class EndlessVolley : CustomCard
     {
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers, Block block)
         {
-            //Edits values on card itself, which are then applied to the player in `ApplyCardStats`
+
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
-            //Edits values on player when card is selected
-            gun.projectileColor += new Color(0f, 0f, 1f, 1f);
-            gun.damageAfterDistanceMultiplier *= -0.25f;
-            gun.bulletDamageMultiplier *= 3f;
-            gun.size *= -5f;
-            gun.projectileColor += new Color(0f, 0f, 1f, 1f);
+            player.gameObject.AddComponent<EndlessVolleyEffect>();
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -32,11 +28,11 @@ namespace OverhaulCards.Cards
 
         protected override string GetTitle()
         {
-            return "Shrink";
+            return "Endless Volley";
         }
         protected override string GetDescription()
         {
-            return "Bullets do more damage up close but do less as they travel.";
+            return "Shoots a delayed shot after the first.";
         }
         protected override GameObject GetCardArt()
         {
@@ -52,9 +48,9 @@ namespace OverhaulCards.Cards
             {
                 new CardInfoStat()
                 {
-                    positive = false,
-                    stat = "Close Damage",
-                    amount = "+200%",
+                    positive = true,
+                    stat = "Delayed Bursts",
+                    amount = "+1",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
             };
@@ -62,7 +58,7 @@ namespace OverhaulCards.Cards
 
         protected override CardThemeColor.CardThemeColorType GetTheme()
         {
-            return CardThemeColor.CardThemeColorType.FirepowerYellow;
+            return CardThemeColor.CardThemeColorType.TechWhite;
         }
         public override string GetModName()
         {
