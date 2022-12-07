@@ -91,8 +91,8 @@ namespace OverhaulCards.MonoBehaviours
                 if (distance <= 2.5f * CardAmount)
                 {
                     affected.Add(enemy);
-                    enemy.GetComponentInChildren<CharacterStatModifiersModifier>().gravity_mult *= -10f;
-                    enemy.GetComponentInChildren<CharacterStatModifiersModifier>().movementSpeed_mult *= 0.1f;
+                    enemy.GetComponentInChildren<CharacterStatModifiersModifier>().gravity_mult = -10f;
+                    enemy.GetComponentInChildren<CharacterStatModifiersModifier>().movementSpeed_mult = 0.1f;
 
                 }
             }
